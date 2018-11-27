@@ -1,20 +1,24 @@
-// Java program to illustrate Client side 
-// Implementation using DatagramSocket 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.charset.Charset;
 import java.io.File;
+import java.io.BufferedWriter;
 import java.io.IOException; 
 import java.net.DatagramPacket; 
 import java.net.DatagramSocket; 
 import java.net.InetAddress; 
 import java.util.Scanner; 
 
-public class udpBaseClient_2 
+
+public class Alice 
 { 
    private static int myPort  = 9000;
    private static int hisPort = 8000;
    private static final int BUFFER_SIZE = 65535;
    
-   public static void main(String args[]) throws IOException 
-   { 
+   public static void main(String args[]) throws IOException
+   {
       String line;
       Scanner scan = new Scanner(new File("contract.txt"));
       DatagramSocket ds = new DatagramSocket(myPort); // Socket for carrying data
@@ -38,15 +42,25 @@ public class udpBaseClient_2
       	// the data. 
          ds.send(DpSend);
       }
-      scan.close();
+      scan.close();      
    
       // Listen for a message
       byte[] receive = new byte[BUFFER_SIZE];
       DatagramPacket DpReceive =
             new DatagramPacket(receive, receive.length);
       ds.receive(DpReceive);
-      System.out.println("Server:-" +
-                         udpBaseServer_2.data(receive));
+      String newContract = udpBaseServer_2.data(receive).toString();
+      System.out.println("Server:-" + newContract);
+
+      // Copy received message to new file
+      Charset charset = Charset.forName("US-ASCII");
+      Path path = Paths.get("newContract.txt");
+      try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
+         writer.write(newContract);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      //Files.write(Paths.get("newContract.txt"), receive); //Bytes
       
       // Send a parting message
       buf = new String("bye").getBytes();

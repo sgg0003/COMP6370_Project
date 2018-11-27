@@ -1,19 +1,18 @@
-// Java program to illustrate Server side 
-// Implementation using DatagramSocket 
 import java.io.IOException; 
 import java.net.DatagramPacket; 
 import java.net.DatagramSocket; 
 import java.net.InetAddress; 
 import java.net.SocketException; 
 
-//import networking.udpBaseClient; 
 
-public class udpBaseServer_2 
+public class Bob 
 {
    private static int myPort  = 8000;
    private static int hisPort = 9000;
    private static final int BUFFER_SIZE = 65535;
-   
+   private static final String MESSAGE =
+         "  Signed: Bob (Seller)  Date: November 29, 2018.";
+
 	// A utility method to convert the byte array 
 	// data into a string representation. 
    public static StringBuilder data(byte[] a) 
@@ -43,12 +42,15 @@ public class udpBaseServer_2
       // Step 2 : create a DatgramPacket to receive the data. 
       DpReceive = new DatagramPacket(receive, receive.length); 
       // Step 3 : revieve the data in byte buffer. 
-      ds.receive(DpReceive); 
-      System.out.println("Client:-" + data(receive));
-      receive = new byte[65535];
+      ds.receive(DpReceive);
+      StringBuilder sb = data(receive);
+      System.out.println("Client:-" + sb);
+      sb.append(MESSAGE);
+      System.out.println("New Message:-" + sb);
+      receive = new byte[65535];    // Clean the receive buffer
       
       // Send a bit of data
-      byte buf[] = "Oh, shoot!".getBytes();
+      byte buf[] = sb.toString().getBytes();
       ds.send(new DatagramPacket(buf, buf.length, ip, hisPort));
    
       DpReceive = new DatagramPacket(receive, receive.length);
@@ -59,7 +61,6 @@ public class udpBaseServer_2
       } else {
          System.out.println("Client:-" + data(receive));
       }
-      //}
    } 
 
 } 
