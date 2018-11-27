@@ -13,6 +13,9 @@ import java.util.Scanner;
 
 public class Alice 
 { 
+   private static DatagramSocket socket;
+   private static InetAddress ip;
+   private static byte buf[];
    private static int myPort  = 9000;
    private static int hisPort = 8000;
    private static final int BUFFER_SIZE = 65535;
@@ -21,11 +24,9 @@ public class Alice
    {
       String line;
       Scanner scan = new Scanner(new File("contract.txt"));
-      DatagramSocket ds = new DatagramSocket(myPort); // Socket for carrying data
-   
-      InetAddress ip = InetAddress.getLocalHost(); 
-      byte buf[] = null;
-   
+      socket = new DatagramSocket(myPort); // Socket for carrying data
+      ip = InetAddress.getLocalHost();  // The IP address is the local machine's
+      
       // Send the entire message of contract.txt
       while (scan.hasNextLine()) {
          line = scan.nextLine();
@@ -40,18 +41,21 @@ public class Alice
       
       	// Step 3 : invoke the send call to actually send 
       	// the data. 
-         ds.send(DpSend);
+         socket.send(DpSend);
       }
       scan.close();      
    
       // Listen for a message
-      byte[] receive = new byte[BUFFER_SIZE];
-      DatagramPacket DpReceive =
-            new DatagramPacket(receive, receive.length);
-      ds.receive(DpReceive);
-      String newContract = udpBaseServer_2.data(receive).toString();
-      System.out.println("Server:-" + newContract);
-
+      buf = new byte[BUFFER_SIZE];
+      DatagramPacket packet =
+            new DatagramPacket(buf, buf.length);
+      socket.receive(packet);
+      
+      String newContract =
+         new String(packet.getData(), 0, packet.getLength());
+      //Bob.data(buf).toString();
+      System.out.println("\nServer:-" + newContract);
+   
       // Copy received message to new file
       Charset charset = Charset.forName("US-ASCII");
       Path path = Paths.get("newContract.txt");
@@ -67,6 +71,6 @@ public class Alice
       //System.out.println("Server:-" + udpBaseServer_2.data(buf));
       DatagramPacket DpSend = 
             new DatagramPacket(buf, buf.length, ip, hisPort); 
-      ds.send(DpSend);
+      socket.send(DpSend);
    } 
 } 
