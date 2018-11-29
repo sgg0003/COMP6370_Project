@@ -1,10 +1,3 @@
-/*
- * Main.java
- * @author: Steven Grecu (sgg0003@auburn.edu)
- * @created: 11/28/2018
- * @version: 11/28/2018
- */
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
@@ -14,6 +7,14 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+
+/*
+ * Main.java
+ *
+ * @author   Steven Grecu (sgg0003@auburn.edu)
+ * @created  11/28/2018
+ * @version  11/29/2018
+ */
 
 
 public class Main {

@@ -1,15 +1,15 @@
-/*
- * Bob.java
- *
- * @author: Steven Grecu (sgg0003@auburn.edu)
- * @created: 11/28/2018
- * @version: 11/28/2018
- */
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.io.IOException;
+
+/*
+ * Bob.java
+ *
+ * @author   Steven Grecu (sgg0003@auburn.edu)
+ * @created  11/28/2018
+ * @version  11/29/2018
+ */
 
 
 public class Bob {
