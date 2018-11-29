@@ -4,11 +4,11 @@ import java.nio.file.Path;
 import java.nio.charset.Charset;
 import java.io.File;
 import java.io.BufferedWriter;
-import java.io.IOException; 
-import java.net.DatagramPacket; 
-import java.net.DatagramSocket; 
-import java.net.InetAddress; 
-import java.util.Scanner; 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
 
 
 public class Alice 
