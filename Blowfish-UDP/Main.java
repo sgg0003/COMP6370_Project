@@ -17,54 +17,54 @@ import java.util.Scanner;
 
 
 public class Main {
-   private static String readContract() {
-      String line = "";
-      try {
-         Scanner scan = new Scanner(new File("contract.txt"));
-         while (scan.hasNextLine())
-            line += scan.nextLine();
-      } catch (FileNotFoundException e) {
-         e.printStackTrace();
-      }
-      return line;
-   }
-   
-   private static void writeContract(String contract) {
-      // Copy received message to new file
-      Charset charset = Charset.forName("US-ASCII");
-      Path path = Paths.get("signed_contract.txt");
-      try (BufferedWriter writer =
-           Files.newBufferedWriter(path, charset)) {
-         writer.write(contract);
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-   }
+  private static String readContract() {
+    String line = "";
+    try {
+      Scanner scan = new Scanner(new File("contract.txt"));
+      while (scan.hasNextLine())
+        line += scan.nextLine();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    return line;
+  }
 
-   public static void main(String[] args) throws IOException {
-      Alice alice = Alice.getInstance();
-      Bob bob     = Bob.getInstance();
-   
-      alice.createKey();
-      alice.sendKey();
-      bob.recvKey();
-      bob.sendKeyConfirm();
-      alice.setMessage(readContract());
-      alice.encrypt();
-      alice.sendMsg();
-      bob.recvMsg();
-      bob.decrypt();
-      bob.sign();
-      bob.encrypt();
-      bob.sendMsg();
-      alice.recvMsg();
-      alice.decrypt();
-      alice.verifySig();
-      writeContract(alice.getMessage());
-   
-      /*****************
-       *    TESTING    *
-       *****************/
-      
-   }
+  private static void writeContract(String contract) {
+    // Copy received message to new file
+    Charset charset = Charset.forName("US-ASCII");
+    Path path = Paths.get("signed_contract.txt");
+    try (BufferedWriter writer =
+        Files.newBufferedWriter(path, charset)) {
+      writer.write(contract);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void main(String[] args) throws IOException {
+    Alice alice = Alice.getInstance();
+    Bob bob     = Bob.getInstance();
+
+    // Key exchange
+    alice.createKey();
+    alice.sendKey();
+    bob.recvKey();
+    bob.sendKeyConfirm();
+    alice.recvMsg();
+    System.out.println("Bob:-" + alice.getMessage());
+
+    // Contract Signature
+    alice.setMessage(readContract());
+    alice.encrypt();
+    alice.sendMsg();
+    bob.recvMsg();
+    bob.decrypt();
+    bob.sign();
+    bob.encrypt();
+    bob.sendMsg();
+    alice.recvMsg();
+    alice.decrypt();
+    alice.verifySig();
+    writeContract(alice.getMessage());
+  }
 }

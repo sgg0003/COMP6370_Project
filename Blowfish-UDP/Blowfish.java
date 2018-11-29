@@ -7,12 +7,12 @@
 
 public class Blowfish {
 
-   public static String encrypt(String plaintext, byte[] key) {
-      return "";
-   }
+  public static String encrypt(String plaintext, byte[] key) {
+    return "";
+  }
 
-   public static String decrypt(String ciphertext, byte[] key) {
-      return "";
-   }
+  public static String decrypt(String ciphertext, byte[] key) {
+    return "";
+  }
 
 }
