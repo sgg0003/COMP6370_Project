@@ -6,13 +6,38 @@
  * @version: 11/29/2018
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+
 public class Blowfish {
   int P[] = new int[18];
   int S[][] = new int[4][256];
 
   
   private Blowfish() {
-    // initialize P and S by calculating PI
+    // initialize P and S reading in PI
+    try {
+       FileInputStream fis = new FileInputStream(new File("pi_hex_1m.txt"));
+       String nums = "";
+       for (int i = 0; i < P.length; i++) {
+         for (int j = 0; j < 8; j++) {
+           nums += (char) fis.read();
+         }
+         P[i] = Integer.parseUnsignedInt(nums, 16);
+         nums = "";
+       }
+       for (int i = 0; i < S.length; i++) {
+         for (int j = 0; j < S[i].length; j++) {
+           for (int k = 0; k < 8; k++) {
+             nums += (char) fis.read();
+           }
+           S[i][j] = Integer.parseUnsignedInt(nums, 16);
+           nums = "";
+         }
+       }
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
 
     /* Copied from Wikipedia; modify to get working
     for (int i=0 ; i<18 ; ++i)
@@ -79,7 +104,8 @@ public class Blowfish {
   /*
    * DO TESTING HERE.
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
+    new Blowfish();
     String testText = "This is a test.";
     byte[] testKey = "password".getBytes();
     System.out.print("Original Key (in hex):");
