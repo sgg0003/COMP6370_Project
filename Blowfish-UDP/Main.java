@@ -13,7 +13,7 @@ import java.util.Scanner;
  *
  * @author   Steven Grecu (sgg0003@auburn.edu)
  * @created  11/28/2018
- * @version  11/29/2018
+ * @version  12/3/2018
  */
 
 
@@ -32,7 +32,7 @@ public class Main {
 
   private static void writeContract(String contract) {
     // Copy received message to new file
-    Charset charset = Charset.forName("US-ASCII");
+    Charset charset = Charset.forName("ISO-8859-1");
     Path path = Paths.get("signed_contract.txt");
     try (BufferedWriter writer =
         Files.newBufferedWriter(path, charset)) {
@@ -42,7 +42,7 @@ public class Main {
     }
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws Exception {
     Alice alice = Alice.getInstance();
     Bob bob     = Bob.getInstance();
 

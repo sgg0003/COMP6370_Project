@@ -20,6 +20,7 @@ public class Bob {
   private String message;
   private byte[] key;
   private byte[] buf;
+  private Blowfish bf;
 
   private final int RECV_PORT   = 8000;
   private final int SEND_PORT   = 9000;
@@ -53,6 +54,7 @@ public class Bob {
     socket.receive(packet);
     for (int i = 0; i < key.length; i++)
       key[i] = packet.getData()[i];
+    bf = new Blowfish(key);
   }
 
   public void sendKeyConfirm() throws IOException {
@@ -64,21 +66,21 @@ public class Bob {
     buf = new byte[BUFFER_SIZE];
     packet = new DatagramPacket(buf, buf.length);
     socket.receive(packet);
-    message = new String(packet.getData(), 0, packet.getLength());
+    message = new String(packet.getData(), 0, packet.getLength(), "ISO-8859-1");
   }
 
   public void sendMsg() throws IOException {
-    buf = message.getBytes();
+    buf = message.getBytes("ISO-8859-1");
     packet = new DatagramPacket(buf, buf.length, ip, SEND_PORT);
     socket.send(packet);
   }
 
-  public void encrypt() {
-    message = Blowfish.encrypt(message, key);
+  public void encrypt() throws Exception {
+    message = bf.encrypt(message, key);
   }
 
-  public void decrypt() {
-    message = Blowfish.decrypt(message, key);
+  public void decrypt() throws Exception {
+    message = bf.decrypt(message, key);
   }
 
   public void sign() {

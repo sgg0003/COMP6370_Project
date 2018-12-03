@@ -21,6 +21,7 @@ public class Alice {
   private String message;
   private byte key[];
   private byte buf[];
+  private Blowfish bf;
 
   private final int RECV_PORT   = 9000;
   private final int SEND_PORT   = 8000;
@@ -46,9 +47,16 @@ public class Alice {
     return alice;
   }         
 
+  // Create the key and initialize the Blowfish algorithm.
   public void createKey() {
-    SecureRandom rand = new SecureRandom();
-    rand.nextBytes(key);
+    try {
+      key = "password".getBytes("ISO-8859-1");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    /*SecureRandom rand = new SecureRandom();
+    rand.nextBytes(key);*/
+    bf = new Blowfish(key);
   }
 
   public void sendKey() throws IOException {
@@ -57,7 +65,7 @@ public class Alice {
   }
 
   public void sendMsg() throws IOException {
-    buf = message.getBytes();
+    buf = message.getBytes("ISO-8859-1");
     packet = new DatagramPacket(buf, buf.length, ip, SEND_PORT);
     socket.send(packet);
   }
@@ -66,15 +74,15 @@ public class Alice {
     buf = new byte[BUFFER_SIZE];
     packet = new DatagramPacket(buf, buf.length);
     socket.receive(packet);
-    message = new String(packet.getData(), 0, packet.getLength());
+    message = new String(packet.getData(), 0, packet.getLength(), "ISO-8859-1");
   }
 
-  public void encrypt() {
-    message = Blowfish.encrypt(message, key);
+  public void encrypt() throws Exception {
+    message = bf.encrypt(message, key);
   }
 
-  public void decrypt() {
-    message = Blowfish.decrypt(message, key);
+  public void decrypt() throws Exception {
+    message = bf.decrypt(message, key);
   }
 
   public void verifySig() {
