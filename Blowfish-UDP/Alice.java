@@ -2,7 +2,16 @@ import java.security.SecureRandom;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.charset.Charset;
+import java.io.File;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 
 /*
  * Alice.java
@@ -14,92 +23,122 @@ import java.io.IOException;
 
 
 public class Alice {
-  private static Alice alice;
-  private DatagramSocket socket;
-  private DatagramPacket packet;
-  private InetAddress ip;
-  private String message;
-  private byte key[];
-  private byte buf[];
-  private Blowfish bf;
+   private static DatagramSocket socket;
+   private static DatagramPacket packet;
+   private static InetAddress ip;
+   private static String message;
+   private static byte key[];
+   private static byte buf[];
+   private static Blowfish bf;
+   private final static int RECV_PORT   = 9000;
+   private final static int SEND_PORT   = 8000;
+   private final static int BUFFER_SIZE = 65535;
 
-  private final int RECV_PORT   = 9000;
-  private final int SEND_PORT   = 8000;
-  private final int BUFFER_SIZE = 65535;
+   // Reads the contract file into message;
+   private static void readContract() {
+      String line = "";
+      try {
+         System.out.println("Reading contract...\n");
+         Scanner scan = new Scanner(new File("contract.txt"));
+         while (scan.hasNextLine())
+            line += scan.nextLine();
+      } catch (FileNotFoundException e) {
+         e.printStackTrace();
+      }
+      message = line;
+   }
 
+   // Copy received message to new file
+   private static void writeContract(String contract) {
+      Charset charset = Charset.forName("ISO-8859-1");
+      Path path = Paths.get("signed_contract.txt");
+      try (BufferedWriter writer =
+           Files.newBufferedWriter(path, charset)) {
+         System.out.println(
+              "Writing signed contract to \"signed_contract.txt\".\n");
+         writer.write(contract);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
 
-  // Constructor sets up socket and sets IP address
-  // to the local machine.
-  private Alice() {
-    this.key = new byte[8];
-    try {
-      this.socket = new DatagramSocket(RECV_PORT);
-      this.ip = InetAddress.getLocalHost();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+   // Create the key and initialize the Blowfish algorithm.
+   public static void createKey() {
+      key = new byte[8];
+      try {
+         System.out.println("Creating session key...\n");
+         SecureRandom rand = new SecureRandom();
+         rand.nextBytes(key);
+         //key = "password".getBytes("ISO-8859-1");
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      bf = new Blowfish(key);
+   }
 
-  // There should only be one Alice object at a time.
-  public static Alice getInstance() {
-    if (alice == null)
-      alice = new Alice();
-    return alice;
-  }         
+   public static void sendKey() throws IOException {
+      packet = new DatagramPacket(key, key.length, ip, SEND_PORT); 
+      System.out.println("Sending the key...\n");
+      socket.send(packet);
+   }
 
-  // Create the key and initialize the Blowfish algorithm.
-  public void createKey() {
-    try {
-      key = "password".getBytes("ISO-8859-1");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    /*SecureRandom rand = new SecureRandom();
-    rand.nextBytes(key);*/
-    bf = new Blowfish(key);
-  }
+   public static void sendMsg() throws IOException {
+      buf = message.getBytes("ISO-8859-1");
+      packet = new DatagramPacket(buf, buf.length, ip, SEND_PORT);
+      System.out.println("Sending a datagram...\n");
+      socket.send(packet);
+   }
 
-  public void sendKey() throws IOException {
-    packet = new DatagramPacket(key, key.length, ip, SEND_PORT); 
-    socket.send(packet);
-  }
+   public static void recvMsg() throws IOException {
+      buf = new byte[BUFFER_SIZE];
+      packet = new DatagramPacket(buf, buf.length);
+      System.out.println("Listening...\n");
+      socket.receive(packet);
+      message = new String(packet.getData(), 0, packet.getLength(), "ISO-8859-1");
+      System.out.println("Received: " + message + "\n");
+   }
 
-  public void sendMsg() throws IOException {
-    buf = message.getBytes("ISO-8859-1");
-    packet = new DatagramPacket(buf, buf.length, ip, SEND_PORT);
-    socket.send(packet);
-  }
+   public static void encrypt() throws Exception {
+      System.out.println("Encrypting...\n");
+      message = bf.encrypt(message, key);
+   }
 
-  public void recvMsg() throws IOException {
-    buf = new byte[BUFFER_SIZE];
-    packet = new DatagramPacket(buf, buf.length);
-    socket.receive(packet);
-    message = new String(packet.getData(), 0, packet.getLength(), "ISO-8859-1");
-  }
+   public static void decrypt() throws Exception {
+      System.out.println("Decrypting...\n");
+      message = bf.decrypt(message, key);
+   }
 
-  public void encrypt() throws Exception {
-    message = bf.encrypt(message, key);
-  }
+   public static void verifySig() {
+      String bobSig = "Signed: Bob (Seller)  Date: November 29, 2018.";
+      int start = message.length() - bobSig.length();
+      int end = message.length();
+      System.out.print("Checking signature... ");
+      if (message.substring(start, end).equals(bobSig))
+         System.out.println("The signature is good.\n");
+      else
+         System.out.println("The signature is BAD!\n");
+   }
 
-  public void decrypt() throws Exception {
-    message = bf.decrypt(message, key);
-  }
-
-  public void verifySig() {
-    String bobSig = "Signed: Bob (Seller)  Date: November 29, 2018.";
-    int start = message.length() - bobSig.length();
-    int end = message.length();
-    if (message.substring(start, end).equals(bobSig))
-      System.out.println("Alice:-The signature is good.");
-    else
-      System.out.println("Alice:-The signature is BAD!");
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public String getMessage() {
-    return this.message;
-  }
+   // This is where the magic happens.
+   public static void main(String[] args) throws Exception {
+      // Create the socket
+      try {
+         System.out.println("Creating a socket...\n");
+         socket = new DatagramSocket(RECV_PORT);
+         ip = InetAddress.getLocalHost();
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      createKey();
+      sendKey();
+      recvMsg();
+      readContract();
+      encrypt();
+      sendMsg();
+      recvMsg();
+      decrypt();
+      verifySig();
+      writeContract(message);
+      System.out.println("EXITING.\n");
+   }
 }

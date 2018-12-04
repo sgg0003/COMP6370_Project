@@ -1,0 +1,38 @@
+Script started on Tue Dec  4 12:44:42 2018
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+[?1034h>> ls
+Alice.java                        Blowfish_Implementation_Plan.docx Main.java
+Alice_exec_trace.txt              Bob.java                          contract.txt
+Blowfish.java                     Bob_exec_trace.txt                pi_hex_1m.txt
+>> javac Alice.java Bob.java 
+>> java Bob
+Creating a socket...
+
+Listening...
+
+Sending datagram...
+
+Listening...
+
+Decrypting...
+
+Signing the contract...
+
+Encrypting...
+
+Sending datagram...
+
+EXITING.
+
+>> ls
+Alice.class                       Blowfish_Implementation_Plan.docx contract.txt
+Alice.java                        Bob.class                         pi_hex_1m.txt
+Alice_exec_trace.txt              Bob.java                          signed_contract.txt
+Blowfish.class                    Bob_exec_trace.txt
+Blowfish.java                     Main.java
+>> exit
+exit
+
+Script done on Tue Dec  4 12:45:52 2018

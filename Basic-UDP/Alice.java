@@ -11,66 +11,50 @@ import java.net.InetAddress;
 import java.util.Scanner;
 
 
-public class Alice 
-{ 
-   private static DatagramSocket socket;
-   private static InetAddress ip;
-   private static byte buf[];
-   private static int myPort  = 9000;
-   private static int hisPort = 8000;
-   private static final int BUFFER_SIZE = 65535;
-   
-   public static void main(String args[]) throws IOException
-   {
-      String line;
-      Scanner scan = new Scanner(new File("contract.txt"));
-      socket = new DatagramSocket(myPort); // Socket for carrying data
-      ip = InetAddress.getLocalHost();  // The IP address is the local machine's
-      
-      // Send the entire message of contract.txt
-      while (scan.hasNextLine()) {
-         line = scan.nextLine();
-      
-      	// convert the String input into the byte array. 
-         buf = line.getBytes(); 
-      
-      	// Step 2 : Create the datagramPacket for sending 
-      	// the data. 
-         DatagramPacket DpSend = 
-            new DatagramPacket(buf, buf.length, ip, hisPort); 
-      
-      	// Step 3 : invoke the send call to actually send 
-      	// the data. 
-         socket.send(DpSend);
-      }
-      scan.close();      
-   
-      // Listen for a message
-      buf = new byte[BUFFER_SIZE];
-      DatagramPacket packet =
-            new DatagramPacket(buf, buf.length);
-      socket.receive(packet);
-      
-      String newContract =
-         new String(packet.getData(), 0, packet.getLength());
-      //Bob.data(buf).toString();
-      System.out.println("\nServer:-" + newContract);
-   
-      // Copy received message to new file
-      Charset charset = Charset.forName("US-ASCII");
-      Path path = Paths.get("newContract.txt");
-      try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
-         writer.write(newContract);
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-      //Files.write(Paths.get("newContract.txt"), receive); //Bytes
-      
-      // Send a parting message
-      buf = new String("bye").getBytes();
-      //System.out.println("Server:-" + udpBaseServer_2.data(buf));
-      DatagramPacket DpSend = 
-            new DatagramPacket(buf, buf.length, ip, hisPort); 
-      socket.send(DpSend);
-   } 
+public class Alice { 
+  private static DatagramSocket socket;
+  private static InetAddress ip;
+  private static byte buf[];
+  private static Scanner scan;
+  private static final int RECV_PORT   = 9000; // hard code ports
+  private static final int SEND_PORT   = 8000;  // hard code ports
+  private static final int BUFFER_SIZE = 65535;
+
+  public static void main(String args[]) throws IOException {
+    System.out.println("Preparing socket...\n");
+    socket = new DatagramSocket(RECV_PORT); // Socket for carrying data
+    ip = InetAddress.getLocalHost();  // Use local host ip addr 
+    DatagramPacket packet;
+
+    // Send the entire message of contract.txt
+    scan = new Scanner(new File("contract.txt"));
+    while (scan.hasNextLine()) {
+      String line = scan.nextLine();
+      buf = line.getBytes(); 
+      packet = new DatagramPacket(buf, buf.length, ip, SEND_PORT); 
+      System.out.println("Sending a datagram...\n");
+      socket.send(packet); // Send the contract
+    }
+    scan.close();
+
+    // Listen for a message
+    System.out.println("Listening...\n");
+    buf = new byte[BUFFER_SIZE];
+    packet = new DatagramPacket(buf, buf.length);
+    socket.receive(packet); // Receive new contract
+    String newContract =
+      new String(packet.getData(), 0, packet.getLength());
+    System.out.println("Received:-" + newContract + "\n");
+
+    // Copy received message to new file
+    Charset charset = Charset.forName("US-ASCII");
+    Path path = Paths.get("newContract.txt");
+    try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
+      writer.write(newContract);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("EXITING...");
+  } 
 } 

@@ -1,0 +1,31 @@
+Script started on Tue Dec  4 12:48:08 2018
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+[?1034h>> ls
+Alice.java                 Bob.java                   contract.txt
+Alice_exec_trace_Basic.txt Bob_exec_trace_Basic.txt
+>> less contract.txt 
+[?1049h[?1h=Contract: This is an agreement between Alice (Buyer) and Bob (Seller) to purchase Property XYZ at Lake Martin, Alabama, for the  price of $900,000.  Signed: Alice (Buyer)  Date: November 27, 2018.
+[7mcontract.txt (END)[27m[K[K[?1l>[?1049l>> ls
+Alice.class                Alice_exec_trace_Basic.txt Bob.java                   contract.txt
+Alice.java                 Bob.class                  Bob_exec_trace_Basic.txt
+>> java Alice
+Preparing socket...
+
+Sending a datagram...
+
+Listening...
+
+Received:-Contract: This is an agreement between Alice (Buyer) and Bob (Seller) to purchase Property XYZ at Lake Martin, Alabama, for the price of $900,000.  Signed: Alice (Buyer)  Date: November 27, 2018.  Signed: Bob (Seller)  Date: November 29, 2018.
+
+EXITING...
+>> less [K[K[K[Ks
+Alice.class                Alice_exec_trace_Basic.txt Bob.java                   contract.txt
+Alice.java                 Bob.class                  Bob_exec_trace_Basic.txt   newContract.txt
+>> less newContract.txt 
+[?1049h[?1h=Contract: This is an agreement between Alice (Buyer) and Bob (Seller) to purchase Property XYZ at Lake Martin, Alabama, for the  price of $900,000.  Signed: Alice (Buyer)  Date: November 27, 2018.  Signed: Bob (Seller)  Date: November 29, 2018.
+[7mnewContract.txt (END)[27m[K[K[?1l>[?1049l>> exit
+exit
+
+Script done on Tue Dec  4 12:49:21 2018

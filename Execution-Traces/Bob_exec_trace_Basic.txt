@@ -1,0 +1,28 @@
+Script started on Tue Dec  4 12:48:34 2018
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+bash: /Users/stevengrecu/torch/install/bin/torch-activate: No such file or directory
+[?1034h>> ls
+Alice.java                 Bob.java                   contract.txt
+Alice_exec_trace_Basic.txt Bob_exec_trace_Basic.txt
+>> javac *.java
+>> ls
+Alice.class                Alice_exec_trace_Basic.txt Bob.java                   contract.txt
+Alice.java                 Bob.class                  Bob_exec_trace_Basic.txt
+>> java Bob
+Creating a socket...
+
+Listening...
+
+Received:-Contract: This is an agreement between Alice (Buyer) and Bob (Seller) to purchase Property XYZ at Lake Martin, Alabama, for the price of $900,000.  Signed: Alice (Buyer)  Date: November 27, 2018.
+
+Sending message...
+
+EXITING...
+>> ls
+Alice.class                Alice_exec_trace_Basic.txt Bob.java                   contract.txt
+Alice.java                 Bob.class                  Bob_exec_trace_Basic.txt   newContract.txt
+>> exit
+exit
+
+Script done on Tue Dec  4 12:49:23 2018
