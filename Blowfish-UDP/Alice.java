@@ -69,7 +69,6 @@ public class Alice {
          System.out.println("Creating session key...\n");
          SecureRandom rand = new SecureRandom();
          rand.nextBytes(key);
-         //key = "password".getBytes("ISO-8859-1");
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -121,24 +120,20 @@ public class Alice {
 
    // This is where the magic happens.
    public static void main(String[] args) throws Exception {
-      // Create the socket
-      try {
-         System.out.println("Creating a socket...\n");
-         socket = new DatagramSocket(RECV_PORT);
-         ip = InetAddress.getLocalHost();
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-      createKey();
-      sendKey();
-      recvMsg();
-      readContract();
-      encrypt();
-      sendMsg();
-      recvMsg();
-      decrypt();
-      verifySig();
-      writeContract(message);
-      System.out.println("EXITING.\n");
+     // Create the socket
+     System.out.println("Creating a socket...\n");
+     socket = new DatagramSocket(RECV_PORT);
+     ip = InetAddress.getLocalHost();
+     createKey();
+     sendKey();
+     recvMsg(); // Acknowledgement of key reception
+     readContract();
+     encrypt();
+     sendMsg();
+     recvMsg();
+     decrypt();
+     verifySig();
+     writeContract(message);
+     System.out.println("EXITING.\n");
    }
 }

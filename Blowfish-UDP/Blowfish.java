@@ -85,7 +85,7 @@ public class Blowfish {
       return y;
    }
 
-   /* THIS IS THE METHOD WIKI CALLS "encrypt" */
+   // Does the actual bit manipulation for encrypting
    private int[] encryptHelper(int L, int R) {
       for (int i = 0; i < 16; i += 2) {
          L ^= P[i];
@@ -100,7 +100,6 @@ public class Blowfish {
    }
    
    public String encrypt(String plaintext, byte[] key) throws Exception {
-      // Break plaintext into successive 32-bit halves to encrypt.
       byte[] bytePlainText = plaintext.getBytes("ISO-8859-1");
       byte[] byteCipherText;
       String ciphertext = "";
@@ -108,19 +107,21 @@ public class Blowfish {
       byte[] Rbyte = new byte[4];
       int len = bytePlainText.length;
    
+      // Break plaintext into successive 64-bit chunks
       for (int i = 0; i < len; i += 8) {
-         if (i+4 >= len) {
-            Lbyte = new byte[4];
+        // Break 64-bit chunks into 32-bit halves, Lbyte & Rbyte 
+         if (i+4 >= len) { // If there aren't enough bytes to fill
+            Lbyte = new byte[4]; // Fill with 0
             for (int j = 0; j < len-i; j++) {
-               Lbyte[j] = bytePlainText[i+j];
+               Lbyte[j] = bytePlainText[i+j]; // just copy last bytes
             }
             Rbyte = new byte[4];
          } else {
             Lbyte = Arrays.copyOfRange(bytePlainText, i, i+4);
-            if (i+8 > len) {
+            if (i+8 > len) { // If there aren't enough bytes to fill
                Rbyte = new byte[4];
                for (int j = 0; j < len-i-4; j++) {
-                  Lbyte[j] = bytePlainText[i+4+j];
+                  Rbyte[j] = bytePlainText[i+4+j];
                }
             } else {
                Rbyte = Arrays.copyOfRange(bytePlainText, i+4, i+8);
@@ -140,7 +141,7 @@ public class Blowfish {
       return ciphertext;
    }
 
-   /* This is the method WIKI calls "decrypt" */
+   // Does the actual bit manipulation for decrypting
    private int[] decryptHelper(int L, int R) {
       for (int i = 16; i > 0; i -= 2) {
          L ^= P[i+1];
@@ -153,7 +154,6 @@ public class Blowfish {
       return new int[]{R, L};
    }
 
-   /* Very similar to encrypt(), just in reverse. */
    public String decrypt(String ciphertext, byte[] key) throws Exception {
       byte[] byteCipherText = ciphertext.getBytes("ISO-8859-1");
       byte[] bytePlainText;
@@ -187,43 +187,4 @@ public class Blowfish {
       }
       return plaintext.replace("\0", ""); // Get rid of trailing null chars
    }
-
-   /*
-    * DO TESTING HERE.
-    *
-   public static void main(String[] args) throws Exception {
-      /*
-      byte[] testKey = "password".getBytes("ISO-8859-1");
-      Blowfish bf = new Blowfish(testKey);
-      String plaintext = "";
-      byte[] byteString = "this is a test".getBytes("ISO-8859-1");
-      byte[] Lbyte = Arrays.copyOfRange(byteString, 0, 4);
-      byte[] Rbyte = Arrays.copyOfRange(byteString, 4, 8);
-      ByteBuffer bbl = ByteBuffer.wrap(Lbyte);
-      ByteBuffer bbr = ByteBuffer.wrap(Rbyte);
-      int L = bbl.getInt();
-      int R = bbr.getInt();
-      int[] LR = bf.encryptHelper(L, R);
-      LR = bf.decryptHelper(LR[0], LR[1]);
-      byte[] bytePlainText = ByteBuffer.allocate(4).putInt(LR[0]).array();
-      plaintext += new String(bytePlainText);
-      bytePlainText = ByteBuffer.allocate(4).putInt(LR[1]).array();
-      plaintext += new String(bytePlainText);
-        
-      
-      String testText = "Contract: This is an agreement between Alice (Buyer) and Bob (Seller) to purchase Property XYZ at Lake Martin, Alabama, for the price of $900,000.  Signed: Alice (Buyer)  Date: November 27, 2018.";
-      byte[] testKey = "password".getBytes("ISO-8859-1");
-      Blowfish bf = new Blowfish(testKey);
-      System.out.print("Original Key (in hex):");
-      for (byte b: testKey)
-         System.out.print(" " + Integer.toString(((int) b), 16));
-      System.out.println("\nOriginal plaintext: " + testText);
-      
-      String encTestText = bf.encrypt(testText, testKey);
-      System.out.println("The encrypted text: " + encTestText);
-      
-      String decTestText = bf.decrypt(encTestText, testKey);
-      System.out.println("The decrypted text: " + decTestText);
-   }
-   */
 }
